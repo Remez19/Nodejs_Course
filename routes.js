@@ -5,33 +5,23 @@ const requestHandler = (req, res) => {
   const method = req.method;
   if (url === "/") {
     res.write("<html>");
-    res.write("<head><title>Enter Name</title>");
-    res.write("<body>");
+    res.write("<head><title>Enter Message</title><head>");
     res.write(
-      '<form action="/message" method="POST"><input type="text" name="message"/><button type="sumbit">Send</button></form>'
+      '<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Send</button></form></body>'
     );
-    res.write("</body>");
     res.write("</html>");
     return res.end();
   }
   if (url === "/message" && method === "POST") {
-    /* 
-         on allows us to listen t odiffrent events.
-         the data event will be fired whenever a new chunck 
-         is ready to be read.
-        the second argument is a function that will be 
-        excuted for every data event.
-         */
     const body = [];
-    req.on("data", (chunck) => {
-      //   console.log(chunck);
-      body.push(chunck);
+    req.on("data", (chunk) => {
+      console.log(chunk);
+      body.push(chunk);
     });
-    return res.on("finish", () => {
+    return req.on("end", () => {
       const parsedBody = Buffer.concat(body).toString();
       const message = parsedBody.split("=")[1];
-      //   console.log(message);
-      fs.writeFile("./UserMessage.txt", message, (error) => {
+      fs.writeFile("message.txt", message, (err) => {
         res.statusCode = 302;
         res.setHeader("Location", "/");
         return res.end();
@@ -39,14 +29,20 @@ const requestHandler = (req, res) => {
     });
   }
   res.setHeader("Content-Type", "text/html");
-  res.write(
-    "<html><hrader><title>My Page</title></header><body><h1>Remez</h1></body></html>"
-  );
+  res.write("<html>");
+  res.write("<head><title>My First Page</title><head>");
+  res.write("<body><h1>Hello from my Node.js Server!</h1></body>");
+  res.write("</html>");
   res.end();
 };
-
 /*
  Nodejs exposes a global var module. 
  with this var we can export ligic from files.
 */
-module.exports = requestHandler;
+// module.exports = requestHandler;
+
+// alternativly
+module.exports = {
+  handler: requestHandler,
+  someText: "Some Text",
+};
