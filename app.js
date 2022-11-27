@@ -11,6 +11,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(adminRoutes);
 
 app.use(shopRoutes);
+
+/**
+ * Handle the errors at the end.
+ * Because of the niddleware logic.
+ * If there is not path that is valid than
+ * the last option will be error.
+ */
+app.use((req, res) => {
+  res.status(404).send("<h1>Page not found</h1>");
+});
 /*
 const server = http.createServer(app);
 
