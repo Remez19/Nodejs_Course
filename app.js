@@ -9,6 +9,8 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(express.static(path.join(__dirname, "public")));
+
 /**
  * If we have diffrent routes with the same segment - all starts with
  * "/admin" than we can filter for those as such.
