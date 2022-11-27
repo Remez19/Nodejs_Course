@@ -7,14 +7,16 @@ const express = require("express");
  */
 const router = express.Router();
 
-router.post("/product", (req, res) => {
+// Same path can be used for diffrent methods. (POST, GET, PUT)
+
+router.post("/add-product", (req, res) => {
   //   bodyParser.urlencoded({ extended: false });
   console.log(req.body.title);
   res.redirect("/");
 });
 router.get("/add-product", (req, res) => {
   res.send(
-    '<form action="/product" method="POST"><input type="text" name="title" /><button type="submit">Add Product</button></form>'
+    '<form action="/admin/add-product" method="POST"><input type="text" name="title" /><button type="submit">Add Product</button></form>'
   );
 });
 
