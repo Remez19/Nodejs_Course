@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 
-const rootDir = require("../util/path");
+const productsController = require("../controllers/products");
 /**
  * This Router is like a mini express app
  * plugable into the other express app
@@ -9,23 +9,9 @@ const rootDir = require("../util/path");
  */
 const router = express.Router();
 
-const products = [];
 // Same path can be used for diffrent methods. (POST, GET, PUT)
 
-router.post("/add-product", (req, res) => {
-  products.push({ title: req.body.title });
-  res.redirect("/");
-});
-router.get("/add-product", (req, res) => {
-  // res.sendFile(path.join(rootDir, "views", "add-product.html"));
-  res.render("add-product", {
-    pageTitle: "Add Product",
-    path: "/admin/add-product",
-    formsCSS: true,
-    productCSS: true,
-    activeAddProduct: true,
-  });
-});
+router.post("/add-product", productsController.postAddProduct);
+router.get("/add-product", productsController.getAddProduct);
 
-exports.routes = router;
-exports.products = products;
+module.exports = router;

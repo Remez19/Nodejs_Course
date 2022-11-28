@@ -1,28 +1,10 @@
 const express = require("express");
 const path = require("path");
 
-const rootDir = require("../util/path");
-
 const router = express.Router();
 
-const adminData = require("./admin");
+const productsController = require("../controllers/products");
 
-router.get("/", (req, res) => {
-  // render() - will use the default templating engine
-  const products = adminData.products;
-  /**
-   * To pass data into our template as an object
-   * with a key name that we can later refer to inside the template file.
-   */
-  res.render("shop", {
-    prods: products,
-    pageTitle: "Shop",
-    path: "/",
-    hasProds: products.length > 0,
-    activeShop: true,
-    activeAddProduct: false,
-    productCSS: true,
-  });
-});
+router.get("/", productsController.getProducts);
 
 module.exports = router;

@@ -3,7 +3,7 @@ const express = require("express");
 
 const path = require("path");
 
-const adminData = require("./routes/admin");
+const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 const app = express();
@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
  * ignore the "/admin" part in the url when it try to
  * match a path.
  */
-app.use("/admin", adminData.routes);
+app.use("/admin", adminRoutes);
 
 app.use(shopRoutes);
 
