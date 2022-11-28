@@ -14,7 +14,11 @@ router.get("/", (req, res) => {
    * To pass data into our template as an object
    * with a key name that we can later refer to inside the template file.
    */
-  res.render("shop", { prods: products, docTitle: "Shop", path: "/" });
+  res.render("shop", {
+    prods: products,
+    pageTitle: "Shop",
+    path: "/",
+  });
 });
 
 module.exports = router;

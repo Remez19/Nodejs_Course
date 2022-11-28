@@ -43,7 +43,9 @@ app.use(shopRoutes);
  * "Catch all" Route.
  */
 app.use((req, res) => {
-  res.status(404).render("404");
+  res.status(404).render("404", {
+    pageTitle: "Page Not Found",
+  });
   // res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
 });
 
