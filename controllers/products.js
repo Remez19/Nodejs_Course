@@ -1,5 +1,4 @@
-const products = [];
-
+const Product = require("../models/product");
 exports.getAddProduct = (req, res) => {
   // res.sendFile(path.join(rootDir, "views", "add-product.html"));
   res.render("add-product", {
@@ -12,7 +11,9 @@ exports.getAddProduct = (req, res) => {
 };
 
 exports.postAddProduct = (req, res) => {
-  products.push({ title: req.body.title });
+  // products.push({ title: req.body.title });
+  const product = new Product(req.body.title);
+  product.save();
   res.redirect("/");
 };
 
@@ -23,6 +24,7 @@ exports.getProducts = (req, res) => {
    * To pass data into our template as an object
    * with a key name that we can later refer to inside the template file.
    */
+  const products = Product.fetchAll();
   res.render("shop", {
     prods: products,
     pageTitle: "Shop",

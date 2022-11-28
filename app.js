@@ -45,7 +45,7 @@ app.use(shopRoutes);
  * the last option will be error.
  * "Catch all" Route.
  */
-app.use(errorRoutes.pageNotFound);
+app.use(errorController.pageNotFound);
 
 /*
 const server = http.createServer(app);
