@@ -1,6 +1,5 @@
 const bodyParser = require("body-parser");
 const express = require("express");
-const expressHbs = require("express-handlebars");
 
 const path = require("path");
 
@@ -15,18 +14,7 @@ const app = express();
  * We set a global coinfiguration value.
  */
 
-// With handlebars we need to specify where our layouts are (the default is "views/layouts"):
-// We can also define a default layout.
-app.engine(
-  "hbs",
-  expressHbs({
-    layoutsDir: "views/layouts/",
-    defaultLayout: "main-layout",
-    extname: "hbs",
-  })
-);
-app.set("view engine", "hbs");
-// app.set("view engine", "pug");
+app.set("view engine", "ejs");
 
 /**
  * Telling express where he can find the templates.
