@@ -8,9 +8,8 @@ const router = express.Router();
 const adminData = require("./admin");
 
 router.get("/", (req, res) => {
-  // __dirname - holds the absolute path to this file we working on
-  console.log(adminData.products);
-  res.sendFile(path.join(rootDir, "views", "shop.html"));
+  // render() - will use the default templating engine
+  res.render("shop");
 });
 
 module.exports = router;

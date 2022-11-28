@@ -7,6 +7,18 @@ const shopRoutes = require("./routes/shop");
 
 const app = express();
 
+/**
+ * Letting express now that we using
+ * a templating engine (such as pug).
+ * We set a global coinfiguration value.
+ */
+
+app.set("view engine", "pug");
+/**
+ * Telling express where he can find the templates.
+ */
+app.set("views", "views");
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -41,4 +53,6 @@ server.listen(3000);
 */
 // Alternitavly
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log("Server Start on port 3000");
+});
