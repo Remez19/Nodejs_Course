@@ -14,7 +14,17 @@ const app = express();
  * a templating engine (such as pug).
  * We set a global coinfiguration value.
  */
-app.engine("hbs", expressHbs());
+
+// With handlebars we need to specify where our layouts are (the default is "views/layouts"):
+// We can also define a default layout.
+app.engine(
+  "hbs",
+  expressHbs({
+    layoutsDir: "views/layouts/",
+    defaultLayout: "main-layout",
+    extname: "hbs",
+  })
+);
 app.set("view engine", "hbs");
 // app.set("view engine", "pug");
 
