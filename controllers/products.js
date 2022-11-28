@@ -18,7 +18,7 @@ exports.postAddProduct = (req, res) => {
 
 exports.getProducts = (req, res) => {
   // render() - will use the default templating engine
-  const products = adminData.products;
+
   /**
    * To pass data into our template as an object
    * with a key name that we can later refer to inside the template file.
