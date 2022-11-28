@@ -5,6 +5,7 @@ const path = require("path");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const errorController = require("./controllers/error");
 
 const app = express();
 
@@ -44,13 +45,7 @@ app.use(shopRoutes);
  * the last option will be error.
  * "Catch all" Route.
  */
-app.use((req, res) => {
-  res.status(404).render("404", {
-    pageTitle: "Page Not Found",
-    path: "",
-  });
-  // res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
-});
+app.use(errorRoutes.pageNotFound);
 
 /*
 const server = http.createServer(app);
