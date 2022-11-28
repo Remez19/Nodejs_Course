@@ -1,5 +1,7 @@
 const bodyParser = require("body-parser");
 const express = require("express");
+const expressHbs = require("express-handlebars");
+
 const path = require("path");
 
 const adminData = require("./routes/admin");
@@ -12,8 +14,10 @@ const app = express();
  * a templating engine (such as pug).
  * We set a global coinfiguration value.
  */
+app.engine("hbs", expressHbs());
+app.set("view engine", "hbs");
+// app.set("view engine", "pug");
 
-app.set("view engine", "pug");
 /**
  * Telling express where he can find the templates.
  */
