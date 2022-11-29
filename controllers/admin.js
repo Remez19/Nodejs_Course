@@ -1,7 +1,7 @@
 const Product = require("../models/product");
 exports.getAddProduct = (req, res) => {
   // res.sendFile(path.join(rootDir, "views", "add-product.html"));
-  res.render("add-product", {
+  res.render("admin/add-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     formsCSS: true,
@@ -12,27 +12,18 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = (req, res) => {
   // products.push({ title: req.body.title });
-  const product = new Product(req.body.title);
+  const { title, imageUrl, description, price } = req.body;
+  const product = new Product(title, imageUrl, description, price);
   product.save();
   res.redirect("/");
 };
 
 exports.getProducts = (req, res) => {
-  // render() - will use the default templating engine
-
-  /**
-   * To pass data into our template as an object
-   * with a key name that we can later refer to inside the template file.
-   */
   Product.fetchAll((products) => {
-    res.render("shop", {
+    res.render("admin/products", {
       prods: products,
-      pageTitle: "Shop",
-      path: "/",
-      hasProds: products.length > 0,
-      activeShop: true,
-      activeAddProduct: false,
-      productCSS: true,
+      pageTitle: "Admin Products",
+      path: "/admin/products",
     });
   });
 };

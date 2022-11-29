@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 
-const productsController = require("../controllers/products");
+const adminController = require("../controllers/admin");
 /**
  * This Router is like a mini express app
  * plugable into the other express app
@@ -11,7 +11,8 @@ const router = express.Router();
 
 // Same path can be used for diffrent methods. (POST, GET, PUT)
 
-router.post("/add-product", productsController.postAddProduct);
-router.get("/add-product", productsController.getAddProduct);
+router.post("/add-product", adminController.postAddProduct);
+router.get("/add-product", adminController.getAddProduct);
+router.get("/products", adminController.getProducts);
 
 module.exports = router;

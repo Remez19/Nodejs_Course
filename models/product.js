@@ -16,7 +16,7 @@ const p = path.join(
  */
 const getProductsFromFile = (callBack) => {
   fs.readFile(p, (err, fileContent) => {
-    if (err) {
+    if (err || fileContent.length === 0) {
       callBack([]);
     } else {
       callBack(JSON.parse(fileContent));
@@ -24,9 +24,15 @@ const getProductsFromFile = (callBack) => {
   });
 };
 
+/**
+ * Class represent a single product.
+ */
 module.exports = class Product {
-  constructor(t) {
-    this.title = t;
+  constructor(title, imageUrl, description, price) {
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
   }
 
   save() {
