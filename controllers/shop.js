@@ -57,6 +57,14 @@ exports.getCart = (req, res) => {
   });
 };
 
+exports.postCart = (req, res) => {
+  // We could have got all the product info from the request and not
+  // only the id.
+  const productId = req.body.productId;
+  console.log(productId);
+  res.redirect("/cart");
+};
+
 exports.getCheckout = (req, res) => {
   res.render("shop/checkout", {
     path: "/checkout",
