@@ -39,5 +39,3 @@ module.exports = class Cart {
     });
   }
 };
-// https://d1w7fb2mkkr3kw.cloudfront.net/assets/images/book/lrg/9781/4027/9781402754227.jpg
-// https://target.scene7.com/is/image/Target/GUEST_f23d73cf-1699-4248-a6bf-471ef08a4a65?wid=488&hei=488&fmt=pjpeg
