@@ -28,22 +28,34 @@ const getProductsFromFile = (callBack) => {
  * Class represent a single product.
  */
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
-    this.id = this.title = title;
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
     this.price = price;
   }
 
   save() {
-    // Creating a unique id for the product before saving it
-    // Can be done better than using Math.random()
-    this.id = Math.random().toString();
     getProductsFromFile((products) => {
-      products.push(this);
-      fs.writeFile(p, JSON.stringify(products), (err) => {
-        console.log(err);
-      });
+      if (this.id) {
+        const existingProductIndex = products.findIndex(
+          (product) => product.id === this.id
+        );
+        const updatedProducts = [...products];
+        updatedProducts[existingProductIndex] = this;
+        fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+          console.log(err);
+        });
+      } else {
+        // Creating a unique id for the product before saving it
+        // Can be done better than using Math.random()
+        this.id = Math.random().toString();
+        products.push(this);
+        fs.writeFile(p, JSON.stringify(products), (err) => {
+          console.log(err);
+        });
+      }
     });
   }
 
