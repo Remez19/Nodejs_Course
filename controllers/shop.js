@@ -14,9 +14,28 @@ exports.getProducts = (req, res) => {
 };
 
 /**
- * getIndex - sends back the the home page to the user.
- * @param {req} req - the request object.
- * @param {*} res - the response object.
+ * getProduct - sends back the individual product detail page.
+ * @param {object} req
+ * @param {object} res
+ */
+exports.getProduct = (req, res) => {
+  /**
+   * Express gives us a "params" object in the request body.
+   * From the "params" object we can extract our dynamic path data.
+   * We named the parameter "productId" in the router -
+   * router.get("/products/:productId");
+   */
+  const prodId = req.params.productId;
+  Product.getProductById(prodId, (product) => {
+    console.log(product);
+  });
+  res.redirect("/");
+};
+
+/**
+ * getIndex - sends back the home page to the user.
+ * @param {object} req - the request object.
+ * @param {object} res - the response object.
  */
 exports.getIndex = (req, res) => {
   Product.fetchAll((products) => {
