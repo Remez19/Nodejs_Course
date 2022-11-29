@@ -24,14 +24,15 @@ exports.getProducts = (req, res) => {
    * To pass data into our template as an object
    * with a key name that we can later refer to inside the template file.
    */
-  const products = Product.fetchAll();
-  res.render("shop", {
-    prods: products,
-    pageTitle: "Shop",
-    path: "/",
-    hasProds: products.length > 0,
-    activeShop: true,
-    activeAddProduct: false,
-    productCSS: true,
+  Product.fetchAll((products) => {
+    res.render("shop", {
+      prods: products,
+      pageTitle: "Shop",
+      path: "/",
+      hasProds: products.length > 0,
+      activeShop: true,
+      activeAddProduct: false,
+      productCSS: true,
+    });
   });
 };
