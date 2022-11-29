@@ -12,7 +12,11 @@ const router = express.Router();
 // Same path can be used for diffrent methods. (POST, GET, PUT)
 
 router.post("/add-product", adminController.postAddProduct);
+
 router.get("/add-product", adminController.getAddProduct);
+
 router.get("/products", adminController.getProducts);
+
+router.get("/edit-product/:productId", adminController.getEditProduct);
 
 module.exports = router;
