@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const Cart = require("../models/cart");
 exports.getProducts = (req, res) => {
   /**
    * To pass data into our template as an object
@@ -61,7 +62,10 @@ exports.postCart = (req, res) => {
   // We could have got all the product info from the request and not
   // only the id.
   const productId = req.body.productId;
-  console.log(productId);
+  //  Getting the product data (we need price)
+  Product.getProductById(productId, (product) => {
+    Cart.addProduct(productId, product.price);
+  });
   res.redirect("/cart");
 };
 
