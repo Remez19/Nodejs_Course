@@ -1,13 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 
+const p = path.join(path.dirname(require.main.filename), "data", "cart.json");
+
 module.exports = class Cart {
   static addProduct(productId, productPrice) {
-    const p = path.join(
-      path.dirname(require.main.filename),
-      "data",
-      "cart.json"
-    );
     /**
      * - Fetch the old or previous cart.
      * - Analyze the cart => find existing product.
@@ -43,11 +40,6 @@ module.exports = class Cart {
   }
   static deleteProduct(id, productPrice) {
     // Try reading the cart.
-    const p = path.join(
-      path.dirname(require.main.filename),
-      "data",
-      "cart.json"
-    );
     fs.readFile(p, (error, fileContent) => {
       if (error) {
         return;
@@ -63,6 +55,24 @@ module.exports = class Cart {
       });
     });
   }
+
+  /**
+   * getProducts - Returns all the products in the cart.
+   * @param {function} callBack - function to excute once the reading of the file
+   * (cart content ) is done.
+   */
+  static getCart(callBack) {
+    fs.readFile(p, (error, fileContent) => {
+      const cart = fileContent.length !== 0 ? JSON.parse(fileContent) : [];
+      // const cart = JSON.parse(fileContent);
+      if (error) {
+        callBack(null);
+      } else {
+        callBack(cart);
+      }
+    });
+  }
 };
+
 // https://target.scene7.com/is/image/Target/GUEST_f23d73cf-1699-4248-a6bf-471ef08a4a65?wid=488&hei=488&fmt=pjpeg
 // https://d1w7fb2mkkr3kw.cloudfront.net/assets/images/book/lrg/9780/3758/9780375866418.jpg

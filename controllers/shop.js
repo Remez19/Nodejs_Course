@@ -52,9 +52,26 @@ exports.getIndex = (req, res) => {
 };
 
 exports.getCart = (req, res) => {
-  res.render("shop/cart", {
-    path: "/cart",
-    pageTitle: "Your Cart",
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+      const cartPrtoducts = [];
+      for (const product of products) {
+        const cartProductData = cart.products.find(
+          (cartProduct) => cartProduct.id === product.id
+        );
+        if (cartProductData !== undefined) {
+          cartPrtoducts.push({
+            productData: product,
+            quantity: cartProductData.quantity,
+          });
+        }
+      }
+      res.render("shop/cart", {
+        path: "/cart",
+        pageTitle: "Your Cart",
+        products: cartPrtoducts,
+      });
+    });
   });
 };
 
