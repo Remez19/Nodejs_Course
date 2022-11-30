@@ -35,6 +35,8 @@ router.get("/cart", shopController.getCart);
 
 router.post("/cart", shopController.postCart);
 
+router.post("/cart-delete-item", shopController.postCartDeleteProduct);
+
 /**
  * Load the view for the "/checkout" path with the help of the controller function
  */
