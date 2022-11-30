@@ -1,26 +1,24 @@
-const express = require("express");
-const path = require("path");
+const path = require('path');
 
-const adminController = require("../controllers/admin");
-/**
- * This Router is like a mini express app
- * plugable into the other express app
- * which we can export.
- */
+const express = require('express');
+
+const adminController = require('../controllers/admin');
+
 const router = express.Router();
 
-// Same path can be used for diffrent methods. (POST, GET, PUT)
+// /admin/add-product => GET
+router.get('/add-product', adminController.getAddProduct);
 
-router.post("/add-product", adminController.postAddProduct);
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
 
-router.get("/add-product", adminController.getAddProduct);
+// /admin/add-product => POST
+router.post('/add-product', adminController.postAddProduct);
 
-router.get("/products", adminController.getProducts);
+router.get('/edit-product/:productId', adminController.getEditProduct);
 
-router.get("/edit-product/:productId", adminController.getEditProduct);
+router.post('/edit-product', adminController.postEditProduct);
 
-router.post("/edit-product", adminController.postEditProduct);
-
-router.post("/delete-product", adminController.postDeleteProduct);
+router.post('/delete-product', adminController.postDeleteProduct);
 
 module.exports = router;
