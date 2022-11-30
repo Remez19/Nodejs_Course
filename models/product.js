@@ -2,25 +2,41 @@ const mongodb = require("mongodb");
 const getDb = require("../util/database").getDb;
 
 class Product {
-  constructor(title, price, description, imageUrl) {
+  constructor(title, price, description, imageUrl, id) {
     this.title = title;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
+    this._id = id;
   }
   save() {
     const dataBase = getDb();
-    // Tell mongodb with which collection we want to interact
-    /**
-     * We can insert data into the collection by:
-     * insertOne() - Receives an js object.
-     * insertMany() - Receives an array of js objects.
-     *
-     * return a promise - we can use than and catch.
-     */
-    return dataBase
-      .collection("products")
-      .insertOne(this)
+    let dbOp;
+    if (this._id) {
+      // Update the product
+      /**
+       * To update a product using mongodb we can use:
+       * updateOne({filter_object}, {$set:{}) - with $set: we can tell mongodb which
+       * fields to edit (title or price). with "this" we tell mongodb to
+       * update all the fields.
+       * if we want to update more than one we can use:
+       * updateMany({filter_object}, {$set:{}) -
+       */
+      dbOp = dataBase
+        .collection("products")
+        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+    } else {
+      // Insert the product.
+      /**
+       * We can insert data into the collection by:
+       * insertOne() - Receives an js object.
+       * insertMany() - Receives an array of js objects.
+       *
+       * return a promise - we can use than and catch.
+       */
+      dbOp = dataBase.collection("products").insertOne(this);
+    }
+    return dbOp
       .then((result) => {
         console.log(result);
       })
