@@ -15,7 +15,15 @@ class User {
   }
   static findUserById(userId) {
     const db = getDb();
-    return db.collection("users").findOne({ _id: new ObjectId(userId) });
+    return db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userId) })
+      .then((user) => {
+        return user;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }
 
