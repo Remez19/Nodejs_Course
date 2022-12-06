@@ -3,11 +3,12 @@ const getDb = require("../util/database").getDb;
 
 class Product {
   constructor(title, price, description, imageUrl, id) {
+    console.log();
     this.title = title;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
-    this._id = id;
+    this._id = id ? new mongodb.ObjectId(id) : null;
   }
   save() {
     const dataBase = getDb();
@@ -24,7 +25,7 @@ class Product {
        */
       dbOp = dataBase
         .collection("products")
-        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+        .updateOne({ _id: this._id }, { $set: this });
     } else {
       // Insert the product.
       /**
@@ -94,6 +95,27 @@ class Product {
         return product;
       })
       .catch((error) => {
+        console.log(error);
+      });
+  }
+  /**
+   * deleteById gets a product id and delete it from the database.
+   * For deleting a product from the database we can use:
+   * deleteOne({fliter}) - deletes one record from the dtabase.
+   * (deletes the first record that fullfill the filter)
+   * deleteMany({fliter}) - deletes more than one record
+   * @param {int} productId
+   */
+  static deleteById(productId) {
+    const dataBaseCon = getDb();
+    return dataBaseCon
+      .collection("products")
+      .deleteOne({ _id: mongodb.ObjectId(productId) })
+      .then((result) => {
+        console.log(`Deleted item with id:${productId} from db successfully`);
+      })
+      .catch((error) => {
+        console.log("product.js deleteById(productId)");
         console.log(error);
       });
   }
