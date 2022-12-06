@@ -17,14 +17,29 @@ class User {
   }
 
   addProductToCart(product) {
-    // const cartProduct = this.cart.items.findIndex((cartProduct) => {
-    //   return cartProduct._id === product._id;
-    // });
+    const cartProductIndex = this.cart.items.findIndex((cartProduct) => {
+      return cartProduct.productId.toString() === product._id.toString();
+    });
+
+    let newQuantity = 1;
+    const updatedCartItems = [...this.cart.items];
+
+    if (cartProductIndex >= 0) {
+      // in case the product is already in the cart
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      // In case it is a new prodcut that is not in the cart.
+      updatedCartItems.push({
+        productId: new ObjectId(product._id),
+        quantity: newQuantity,
+      });
+    }
 
     // Adding field to the product on the fly
     // product.quantity = 1;
     const updatedCart = {
-      items: [{ productId: new ObjectId(product._id), quantity: 1 }],
+      items: updatedCartItems,
     };
     const db = getDb();
     return db
