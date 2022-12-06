@@ -9,7 +9,7 @@ let _db = null;
 const mongoConnect = (callBack) => {
   MongoClient.connect(
     // The connection string provided by mongodb website
-    "mongodb+srv://Remez:hj0mm0puhT9FUv0b@nodejscourse.7vjdhyd.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://Remez:FJn55dv7WdyeYQeL@nodejscourse.7vjdhyd.mongodb.net/?retryWrites=true&w=majority"
   )
     .then((client) => {
       console.log("CONNECTED TO MONGODB!");
