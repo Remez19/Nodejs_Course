@@ -1,3 +1,46 @@
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
+
+/**
+ * In the object we passing to the Schema({})
+ * we describe how our schema should look like.
+ * blueprint.
+ * we need to specify the type of the field too.
+ *
+ * A description of how product should look like in our application
+ */
+const productSchema = new Schema({
+  /**
+   * We can just do: title: String,
+   * Other way of declaring the title field and inforcing
+   * that when we insert it has to be with a value is:
+   * title: {
+   * type: String,
+   * required: true,
+   * }
+   */
+  title: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  imageUrl: {
+    type: String,
+    required: true,
+  },
+});
+
+// mongoose.model() - Connects a schema with a name
+module.exports = mongoose.model("Product", productSchema);
+
 // const mongodb = require("mongodb");
 // const getDb = require("../util/database").getDb;
 
