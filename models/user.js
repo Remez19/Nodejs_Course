@@ -6,7 +6,7 @@ const ObjectId = mongodb.ObjectId;
 class User {
   constructor(userName, email, cart, id) {
     this.userName = userName;
-    this.email = this.email;
+    this.email = email;
     this.cart = cart; // {items: []}
     this._id = id;
   }
@@ -90,17 +90,17 @@ class User {
 
   addOrder() {
     const db = getDb();
-    const order = {
-      items: this.cart.items,
-      user: {
-        _id: new ObjectId(this._id),
-        name: this.name,
-      },
-    };
-    // When adding an order we add the complete cart.
-    return db
-      .collection("orders")
-      .insertOne(this.cart)
+    return this.getCartItems()
+      .then((products) => {
+        const order = {
+          items: products,
+          user: {
+            _id: new ObjectId(this._id),
+            name: this.userName,
+          },
+        };
+        return db.collection("orders").insertOne(order);
+      })
       .then((result) => {
         this.cart = { items: [] };
         // calearing the database
