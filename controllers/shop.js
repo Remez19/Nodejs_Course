@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const User = require("../models/user");
+const Order = require("../models/order");
 
 exports.getProducts = (req, res, next) => {
   // Product.find() - Will return all the records in the collection
@@ -21,7 +22,6 @@ exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then((product) => {
-      console.log(product);
       res.render("shop/product-detail", {
         product: product,
         pageTitle: product.title,
@@ -84,7 +84,25 @@ exports.postCartDeleteProduct = (req, res) => {
 
 exports.postOrder = (req, res, next) => {
   req.user
-    .addOrder()
+    // In order to get the full data of each product in the cart we can use
+    // "populate("cart.items.productId")"
+    .populate("cart.items.productId")
+    .then((user) => {
+      const products = user.cart.items.map((item) => {
+        return {
+          productData: item.productId,
+          quantity: item.quantity,
+        };
+      });
+      const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+        products: products,
+      });
+      return order.save();
+    })
     .then((result) => {
       res.redirect("/orders");
     })
@@ -95,7 +113,6 @@ exports.getOrders = (req, res, next) => {
   req.user
     .getOrders()
     .then((orders) => {
-      console.log(orders);
       res.render("shop/orders", {
         path: "/orders",
         pageTitle: "Your Orders",
