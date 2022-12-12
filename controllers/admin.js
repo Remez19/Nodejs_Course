@@ -34,7 +34,7 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
   const prodId = req.params.productId;
-  Product.findProductById(prodId)
+  Product.findById(prodId)
     // Product.findById(prodId)
     .then((product) => {
       if (!product) {
@@ -52,10 +52,16 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, price, description, imageUrl } = req.body;
-  // console.log("New Data: ", prodId, title, price, description, imageUrl);
-  const product = new Product(title, price, description, imageUrl, productId);
-  product
-    .save()
+
+  // return a full mongoose object which we can call save on later
+  Product.findById(productId)
+    .then((product) => {
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
+      return product.save();
+    })
     .then((result) => {
       console.log("UPDATED PRODUCT!");
       res.redirect("/admin/products");
@@ -64,7 +70,7 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       res.render("admin/products", {
         prods: products,
