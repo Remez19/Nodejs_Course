@@ -36,6 +36,12 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
+  userId: {
+    type: Schema.Types.ObjectId,
+    // To which shema we refer to in the object id
+    ref: "User",
+    required: true,
+  },
 });
 
 // mongoose.model() - Connects a schema with a name
