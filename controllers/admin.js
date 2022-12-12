@@ -74,7 +74,13 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find()
+    // I we want to get all the users data when fetching the
+    // products mongoose has a built in function (because its a relation).
+    // with "populate" we can tell mongoose to populate all the inforamtion
+    // and not just the id
+    // .populate("userId")
     .then((products) => {
+      // console.log(products);
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",
