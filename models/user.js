@@ -69,6 +69,12 @@ userShema.methods.removeFromCart = function (productId) {
   this.cart.items = updatedCartItems;
   return this.save();
 };
+
+userShema.methods.clearCart = function () {
+  this.cart = { items: [] };
+  return this.save();
+};
+
 module.exports = mongoose.model("User", userShema);
 
 // const getDb = require("../util/database").getDb;
