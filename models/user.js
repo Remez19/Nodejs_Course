@@ -14,7 +14,7 @@ const userShema = new Schema({
   cart: {
     items: [
       {
-        producyId: {
+        productId: {
           type: Schema.Types.ObjectId,
           ref: "Product",
           required: true,
@@ -27,6 +27,41 @@ const userShema = new Schema({
     ],
   },
 });
+
+/**
+ * The "methods" key allows us to add our own methods to the
+ * schema.
+ * the methods must be of type function () {} (not arrow function)
+ * for the "this" keyword will refer to the schema.
+ */
+userShema.methods.addToCart = function (product) {
+  const cartProductIndex = this.cart.items.findIndex((cartProduct) => {
+    return cartProduct.productId.toString() === product._id.toString();
+  });
+
+  let newQuantity = 1;
+  const updatedCartItems = [...this.cart.items];
+
+  if (cartProductIndex >= 0) {
+    // in case the product is already in the cart
+    newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+    updatedCartItems[cartProductIndex].quantity = newQuantity;
+  } else {
+    // In case it is a new prodcut that is not in the cart.
+    updatedCartItems.push({
+      productId: product._id,
+      quantity: newQuantity,
+    });
+  }
+
+  // Adding field to the product on the fly
+  // product.quantity = 1;
+  const updatedCart = {
+    items: updatedCartItems,
+  };
+  this.cart = updatedCart;
+  return this.save();
+};
 
 module.exports = mongoose.model("User", userShema);
 
