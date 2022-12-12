@@ -90,7 +90,10 @@ exports.postOrder = (req, res, next) => {
     .then((user) => {
       const products = user.cart.items.map((item) => {
         return {
-          productData: item.productId,
+          // mongoose gives us a special field clled "_doc"
+          // with the "..." operator we can pull all the data in the
+          // object
+          productData: { ...item.productId._doc },
           quantity: item.quantity,
         };
       });
