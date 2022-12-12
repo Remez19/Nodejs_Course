@@ -62,7 +62,13 @@ userShema.methods.addToCart = function (product) {
   this.cart = updatedCart;
   return this.save();
 };
-
+userShema.methods.removeFromCart = function (productId) {
+  const updatedCartItems = this.cart.items.filter(
+    (product) => product.productId.toString() !== productId.toString()
+  );
+  this.cart.items = updatedCartItems;
+  return this.save();
+};
 module.exports = mongoose.model("User", userShema);
 
 // const getDb = require("../util/database").getDb;
