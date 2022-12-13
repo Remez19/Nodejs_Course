@@ -7,4 +7,7 @@ const router = express.Router();
 // Load the login page
 router.get("/login", authController.getLogin);
 
+// Post request for login
+router.post("/login", authController.postLogin);
+
 module.exports = router;
