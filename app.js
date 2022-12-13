@@ -1,4 +1,5 @@
 const path = require("path");
+require("dotenv").config();
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -35,10 +36,9 @@ app.use(shopRoutes);
 app.use(authRoutes);
 
 app.use(errorController.get404);
-
 mongoose
   .connect(
-    "mongodb+srv://Remez:FJn55dv7WdyeYQeL@nodejscourse.7vjdhyd.mongodb.net/shop?retryWrites=true&w=majority"
+    `mongodb+srv://${process.env.MongodbUser}:${process.env.MongodbPassword}@${process.env.MongodbDataBaseName}.7vjdhyd.mongodb.net/${process.env.MongodbCollectionName}?retryWrites=true&w=majority`
   )
   .then((result) => {
     // Creating a user before server listen
