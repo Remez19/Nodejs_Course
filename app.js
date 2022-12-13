@@ -4,7 +4,8 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const port = 3000;
+const session = require("express-session");
+const port = process.env.PORT;
 
 const errorController = require("./controllers/error");
 // const mongoConnect = require("./util/database").mongoConnect;
@@ -21,6 +22,27 @@ const authRoutes = require("./routes/auth");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+/**
+ * In the object we pass to "session()" we configure
+ * the session.
+ *
+ * "secret" - used for signing the hash (look more into it)
+ * "resave" - if the session should be saved on every response that sent or only when but
+ * only if something changed in the session.
+ *
+ * saveUninitialized - make sure that no session will be saved for a request
+ * when it dosent need to be saved (cause nothing was changed about it)
+ *
+ * "cookie" - configure the cookie.
+ */
+app.use(
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    // cookie: {maxAge: }
+  })
+);
 
 app.use((req, res, next) => {
   User.findById("6397244fa9a920efc142aa74")
