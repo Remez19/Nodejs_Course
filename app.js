@@ -5,6 +5,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
+
+/**
+ * Gives us a constructor function which we need to execute and pass the session to
+ */
+const MongoDBStore = require("connect-mongodb-session")(session);
+
 const port = process.env.PORT;
 
 const errorController = require("./controllers/error");
@@ -12,6 +18,18 @@ const errorController = require("./controllers/error");
 const User = require("./models/user");
 
 const app = express();
+
+const MONGODB_URI = `mongodb+srv://${process.env.MongodbUser}:${process.env.MongodbPassword}@${process.env.MongodbDataBaseName}.7vjdhyd.mongodb.net/${process.env.MongodbCollectionName}?retryWrites=true&w=majority`;
+
+/**
+ *  "uri" - connection string in which database we want to save the data.
+ *  "collection" - the collection we want to store it in.
+ *  "expires" - when should it be expired (it will be cleaned up automatically by mongodb).
+ */
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -40,6 +58,7 @@ app.use(
     secret: "my secret",
     resave: false,
     saveUninitialized: false,
+    store: store,
     // cookie: {maxAge: }
   })
 );
@@ -59,9 +78,7 @@ app.use(authRoutes);
 
 app.use(errorController.get404);
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.MongodbUser}:${process.env.MongodbPassword}@${process.env.MongodbDataBaseName}.7vjdhyd.mongodb.net/${process.env.MongodbCollectionName}?retryWrites=true&w=majority`
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     // Creating a user before server listen
     User.findOne().then((user) => {
