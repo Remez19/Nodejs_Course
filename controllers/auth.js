@@ -2,21 +2,18 @@ exports.getLogin = (req, res, next) => {
   // Getting the value of "loggedIn" Cookie
   // const isLoggedIn = req.get("Cookie").split("=")[1];
   // console.log(req.get("Cookie"));
+  console.log(req.session.isLoggedin);
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    isAuthenticated: isLoggedIn,
+    isAuthenticated: false,
   });
 };
 
 exports.postLogin = (req, res, next) => {
   /**
-   * Setting up a cookie with a header.
-   * The "Set-Cookie" is a reserved name we can use to set up a cookie.
-   * A cookie in its simplest form is a key-value pair.
-   * The browser send the cookie by default on every request we make.
+   * We can setup any key value by reaching req.session
    */
-  res.setHeader("Set-Cookie", "loggedIn=true");
-  req.isLoggedIn = true;
+  req.session.isLoggedin = true;
   res.redirect("/");
 };
