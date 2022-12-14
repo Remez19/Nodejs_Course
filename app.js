@@ -10,6 +10,7 @@ const session = require("express-session");
  * Gives us a constructor function which we need to execute and pass the session to
  */
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
 
 const port = process.env.PORT;
 
@@ -30,6 +31,11 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "sessions",
 });
+
+// Init csrf
+// We can set some optional values by passing {} to it
+// More on the offical docs.
+const csrfProtection = csrf();
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -62,6 +68,9 @@ app.use(
     // cookie: {maxAge: }
   })
 );
+
+// After we init the session (important because the csrf will use the session)
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
   if (!req.session.user) {
