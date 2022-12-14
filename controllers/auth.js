@@ -69,20 +69,21 @@ exports.postSignup = (req, res, next) => {
        * 12 rounds consider highly secured.
        * Give back a promise (asyncronios - can chain then).
        */
-      return bycrpt.hash(password, 12);
-    })
-    .then((hashedPassword) => {
-      const user = new User({
-        email: email,
-        password: hashedPassword,
-        cart: { items: [] },
-      });
-      return user.save();
-    })
-    .then((result) => {
-      // Succesfully created new user
+      return bycrpt
+        .hash(password, 12)
+        .then((hashedPassword) => {
+          const user = new User({
+            email: email,
+            password: hashedPassword,
+            cart: { items: [] },
+          });
+          return user.save();
+        })
+        .then((result) => {
+          // Succesfully created new user
 
-      res.redirect("/login");
+          res.redirect("/login");
+        });
     })
     .catch((error) => {
       console.log("auth postSignup: " + error);
