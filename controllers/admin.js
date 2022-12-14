@@ -18,7 +18,7 @@ exports.postAddProduct = (req, res, next) => {
     description: description,
     // With mongoose we can save the entire user object.
     // and mongoose will take the user id automatically.
-    userId: req.session.user,
+    userId: req.user,
   });
   product
     .save()
