@@ -1,11 +1,9 @@
+const User = require("../models/user");
 exports.getLogin = (req, res, next) => {
-  // Getting the value of "loggedIn" Cookie
-  // const isLoggedIn = req.get("Cookie").split("=")[1];
-  // console.log(req.get("Cookie"));
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    isAuthenticated: false,
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -13,6 +11,27 @@ exports.postLogin = (req, res, next) => {
   /**
    * We can setup any key value by reaching req.session
    */
-  req.session.isLoggedin = true;
-  res.redirect("/");
+  // Creating a user before server listen
+  User.findById("6397244fa9a920efc142aa74")
+    .then((user) => {
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      res.redirect("/");
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.postLogout = (req, res, next) => {
+  /**
+   * "destroy()" - a method provided by the session object.
+   * The method destroy the session.
+   * As an argument we pass a function that will be called once the session
+   * is destroyed.
+   */
+  req.session.destroy((error) => {
+    if (error) {
+      console.log(error);
+    }
+    res.redirect("/");
+  });
 };
