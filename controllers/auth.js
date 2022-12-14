@@ -1,4 +1,5 @@
-const { result } = require("lodash");
+const bycrpt = require("bycrptjs");
+
 const User = require("../models/user");
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -62,6 +63,8 @@ exports.postSignup = (req, res, next) => {
         return res.redirect("/signup");
       }
       // User Not exist!
+      // Hashing the password
+      bycrpt;
       const user = new User({
         email: email,
         password: password,
