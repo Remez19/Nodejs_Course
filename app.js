@@ -10,6 +10,7 @@ const session = require("express-session");
  */
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
+const flash = require("connect-flash");
 
 const port = process.env.PORT;
 
@@ -70,6 +71,10 @@ app.use(
 
 // After we init the session (important because the csrf will use the session)
 app.use(csrfProtection);
+
+// After we init the session !
+// Help us flash messages when redirecting!
+app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {

@@ -5,7 +5,9 @@ exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    isAuthenticated: req.session.isLoggedIn,
+    // Pulling the value of the key error, after that it will be removed
+    // from the session
+    errorMessage: req.flash("error"),
   });
 };
 
@@ -18,6 +20,10 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
+        // flash error message into our session
+        // takes a key value pair.
+        // Here the key="error", value="Invalid email or password"
+        req.flash("error", "Invalid email or password");
         return res.redirect("/login");
       }
       // checks if the password the user entered is the hashed version.
@@ -64,7 +70,6 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
-    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
