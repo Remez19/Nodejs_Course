@@ -83,19 +83,6 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    // Creating a user before server listen
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "Remez",
-          email: "remez@test.com",
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
     app.listen(port, () => {
       console.log("Connected to Database.");
       console.log(`Server listening on port: ${port}.`);

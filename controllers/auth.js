@@ -1,3 +1,4 @@
+const { result } = require("lodash");
 const User = require("../models/user");
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -50,4 +51,30 @@ exports.getSignup = (req, res, next) => {
   });
 };
 
-exports.postSignup = (req, res, next) => {};
+exports.postSignup = (req, res, next) => {
+  // Here we want to save a new user to the database
+  const { email, password, confirmPassword } = req.body;
+  // Validate user input - if the input is valid.
+  User.findOne({ email: email })
+    .then((userDoc) => {
+      if (userDoc) {
+        // User with the same email already exist
+        return res.redirect("/signup");
+      }
+      // User Not exist!
+      const user = new User({
+        email: email,
+        password: password,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then((result) => {
+      // Succesfully created new user
+
+      res.redirect("/login");
+    })
+    .catch((error) => {
+      console.log("auth postSignup: " + error);
+    });
+};
