@@ -1,5 +1,6 @@
 const User = require("../models/user");
-const bycrpt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
+const saltValue = 12;
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     path: "/login",
@@ -9,21 +10,37 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
+  const { email, password } = req.body;
   /**
    * We can setup any key value by reaching req.session
    */
   // Creating a user before server listen
-  User.findById("6397244fa9a920efc142aa74")
+  User.findOne({ email: email })
     .then((user) => {
-      req.session.isLoggedIn = true;
-      req.session.user = user;
-      // Make sure that we redirect once we saved the session in the data base
-      req.session.save((error) => {
-        if (error) {
-          console.log(error);
-        }
-        res.redirect("/");
-      });
+      if (!user) {
+        return res.redirect("/login");
+      }
+      // checks if the password the user entered is the hashed version.
+      // return boolean => true or false
+      bcrypt
+        .compare(password, user.password)
+        .then((doMatch) => {
+          if (doMatch) {
+            // password ok
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            // Make sure that we redirect once we saved the session in the data base
+            return req.session.save((error) => {
+              console.log(error);
+              res.redirect("/");
+            });
+          }
+          res.redirect("/login");
+        })
+        .catch((error) => {
+          console.log("postLogin " + error);
+          res.redirect("/login");
+        });
     })
     .catch((err) => console.log(err));
 };
@@ -69,8 +86,8 @@ exports.postSignup = (req, res, next) => {
        * 12 rounds consider highly secured.
        * Give back a promise (asyncronios - can chain then).
        */
-      return bycrpt
-        .hash(password, 12)
+      return bcrypt
+        .hash(password, saltValue)
         .then((hashedPassword) => {
           const user = new User({
             email: email,
