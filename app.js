@@ -5,7 +5,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
-
 /**
  * Gives us a constructor function which we need to execute and pass the session to
  */
@@ -82,6 +81,14 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => console.log(err));
+});
+
+// Tell express that we have data that should be include on every view we render
+app.use((req, res, next) => {
+  // Allows to set local values that will be passed to the views
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 app.use("/admin", adminRoutes);
