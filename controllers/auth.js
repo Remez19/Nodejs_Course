@@ -2,12 +2,14 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const saltValue = 12;
 exports.getLogin = (req, res, next) => {
+  let message = req.flash("error");
+
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
     // Pulling the value of the key error, after that it will be removed
     // from the session
-    errorMessage: req.flash("error"),
+    errorMessage: message.length > 0 ? message[0] : null,
   });
 };
 
