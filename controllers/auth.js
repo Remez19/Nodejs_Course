@@ -1,6 +1,22 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const nodeMailer = require("nodemailer");
+const sendGridTransport = require("nodemailer-sendgrid-transport");
+require("dotenv").config();
+
 const saltValue = 12;
+
+// A setup to tell nodemailer on how our mails should be sent
+// sendGridTransport() - will return a configuration that nodemailer to use sebdGrid
+const transporter = nodeMailer.createTransport(
+  sendGridTransport({
+    auth: {
+      api_key:
+        "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",
+    },
+  })
+);
+
 exports.getLogin = (req, res, next) => {
   let message = req.flash("error");
 
@@ -109,8 +125,20 @@ exports.postSignup = (req, res, next) => {
         })
         .then((result) => {
           // Succesfully created new user
-
+          // Send email of successfully signup
+          /**
+           * sendMail() - gets an object.
+           */
           res.redirect("/login");
+          return transporter.sendMail({
+            to: email,
+            from: process.env.EMAIL,
+            subject: "Signup succeeded",
+            html: "<h1>You Succsesfully signed up</h1>",
+          });
+        })
+        .catch((error) => {
+          console.log(error);
         });
     })
     .catch((error) => {
