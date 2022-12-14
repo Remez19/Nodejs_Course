@@ -1,6 +1,5 @@
-const bycrpt = require("bycrptjs");
-
 const User = require("../models/user");
+const bycrpt = require("bcryptjs");
 exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     path: "/login",
@@ -62,12 +61,20 @@ exports.postSignup = (req, res, next) => {
         // User with the same email already exist
         return res.redirect("/signup");
       }
-      // User Not exist!
-      // Hashing the password
-      bycrpt;
+      // User Not exists
+      /**
+       * Hashing the password
+       * hash(string_to_hash, salt_value)
+       * salt_value - the number of hashing rounds will be applied.
+       * 12 rounds consider highly secured.
+       * Give back a promise (asyncronios - can chain then).
+       */
+      return bycrpt.hash(password, 12);
+    })
+    .then((hashedPassword) => {
       const user = new User({
         email: email,
-        password: password,
+        password: hashedPassword,
         cart: { items: [] },
       });
       return user.save();
