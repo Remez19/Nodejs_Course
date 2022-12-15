@@ -31,10 +31,24 @@ exports.getLogin = (req, res, next) => {
     // Pulling the value of the key error, after that it will be removed
     // from the session
     errorMessage: message.length > 0 ? message[0] : null,
+    // oldInput: {
+    //   email: "",
+    //   password: "",
+    //   confirmPassword: "",
+    // },
   });
 };
 
 exports.postLogin = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(442).render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
+
   const { email, password } = req.body;
   /**
    * We can setup any key value by reaching req.session
@@ -96,6 +110,11 @@ exports.getSignup = (req, res, next) => {
     path: "/signup",
     pageTitle: "Signup",
     errorMessage: message.length > 0 ? message[0] : null,
+    oldInput: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 };
 
@@ -106,12 +125,17 @@ exports.postSignup = (req, res, next) => {
   const errors = validationResult(req);
 
   // check if we have errors in the user input
-  if (!errors.isEmpty) {
+  if (!errors.isEmpty()) {
     // 442 comon code for validation fail
     return res.status(442).render("auth/signup", {
       path: "/signup",
       pageTitle: "Signup",
       errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+      },
     });
   }
   /**

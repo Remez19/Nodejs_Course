@@ -11,7 +11,18 @@ router.get("/login", authController.getLogin);
 router.get("/signup", authController.getSignup);
 
 // Post request for login
-router.post("/login", authController.postLogin);
+router.post(
+  "/login",
+  check("email").isEmail().withMessage("Please enter a valid email"),
+  body("password")
+    .isAlphanumeric()
+    .custom((value, { req }) => {
+      if (value.length < 5) {
+        throw new Error("Password too short (at least 6 characters)");
+      }
+    }),
+  authController.postLogin
+);
 
 /**
  * Adding middleware for validating the userr input
