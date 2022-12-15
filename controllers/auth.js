@@ -196,7 +196,9 @@ exports.postReset = (req, res, next) => {
             <h1>Password Reset</h1> 
             <p>You requested a password reset</p>
             <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-            <p>The link will be available until ${experation.toString()}.</p>
+            <p>The link will be available until ${Date(
+              experation
+            ).toString()}.</p>
           `,
         });
       })
