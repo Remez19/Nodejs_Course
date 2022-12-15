@@ -17,7 +17,6 @@ const transporter = nodeMailer.createTransport({
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash("error");
-
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
@@ -142,4 +141,15 @@ exports.postSignup = (req, res, next) => {
     .catch((error) => {
       console.log("auth postSignup: " + error);
     });
+};
+
+exports.getReset = (req, res, next) => {
+  let message = req.flash("error");
+  res.render("auth/reset", {
+    path: "/reset",
+    pageTitle: "Reset Password",
+    // Pulling the value of the key error, after that it will be removed
+    // from the session
+    errorMessage: message.length > 0 ? message[0] : null,
+  });
 };
