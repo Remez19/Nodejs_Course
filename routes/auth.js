@@ -1,8 +1,8 @@
 const express = require("express");
-const { check } = require("express-validator/check");
+const { check, body } = require("express-validator/check");
 
 const authController = require("../controllers/auth");
-
+const User = require("../models/user");
 const router = express.Router();
 
 // Load the login page
@@ -18,20 +18,44 @@ router.post("/login", authController.postLogin);
  * Check will return a middleware function.
  * check() - gets as an argument name of field
  * we want to check or array of names
+ *
  * */
 router.post(
   "/signup",
-  check("email")
-    .isEmail()
-    .withMessage("Please Enter a Valid E-mail")
-    // A custom validator we create
-    .custom((value, { req }) => {
-      if (value === "test@test.com") {
-        throw new Error("This email address is forbiden");
+  [
+    // We can put all our checks in array (not have to)
+    check("email")
+      .isEmail()
+      .withMessage("Please Enter a Valid E-mail")
+      // A custom validator we create
+      .custom((value, { req }) => {
+        // if (value === "test@test.com") {
+        //   throw new Error("This email address is forbiden");
+        // }
+        // // if ok return true
+        // return true;
+        return User.findOne({ email: value }).then((userDoc) => {
+          if (userDoc) {
+            // User with the same email already exist
+            return Promise.reject("Email exist");
+          }
+        });
+      }),
+    body(
+      "password",
+      //   Default error message for every check
+      "Please enter password that contains only numbers and text at least 5 and lower than 20"
+    )
+      .isLength({ min: 5, max: 20 })
+      .isAlphanumeric(),
+    body("confirmPassword").custom((value, { req }) => {
+      if (value !== req.body.password) {
+        console.log("Remez");
+        throw new Error("Passwords not match!");
       }
-      // if ok return true
       return true;
     }),
+  ],
   authController.postSignup
 );
 
