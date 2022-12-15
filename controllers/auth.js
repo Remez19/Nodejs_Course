@@ -114,48 +114,39 @@ exports.postSignup = (req, res, next) => {
       errorMessage: errors.array()[0].msg,
     });
   }
-  User.findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        // User with the same email already exist
-        req.flash("error", "Email exist");
-        return res.redirect("/signup");
-      }
-      // User Not exists
+  /**
+   * Hashing the password
+   * hash(string_to_hash, salt_value)
+   * salt_value - the number of hashing rounds will be applied.
+   * 12 rounds consider highly secured.
+   * Give back a promise (asyncronios - can chain then).
+   */
+  bcrypt
+    .hash(password, saltValue)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then((result) => {
+      // Succesfully created new user
+      // Send email of successfully signup
       /**
-       * Hashing the password
-       * hash(string_to_hash, salt_value)
-       * salt_value - the number of hashing rounds will be applied.
-       * 12 rounds consider highly secured.
-       * Give back a promise (asyncronios - can chain then).
+       * sendMail() - gets an object.
        */
-      return bcrypt
-        .hash(password, saltValue)
-        .then((hashedPassword) => {
-          const user = new User({
-            email: email,
-            password: hashedPassword,
-            cart: { items: [] },
-          });
-          return user.save();
-        })
-        .then((result) => {
-          // Succesfully created new user
-          // Send email of successfully signup
-          /**
-           * sendMail() - gets an object.
-           */
-          res.redirect("/login");
-          return transporter.sendMail({
-            to: email,
-            from: process.env.EMAIL,
-            subject: "Signup succeeded",
-            html: "<h1>You Succsesfully signed up</h1>",
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      res.redirect("/login");
+      return transporter.sendMail({
+        to: email,
+        from: process.env.EMAIL,
+        subject: "Signup succeeded",
+        html: "<h1>You Succsesfully signed up</h1>",
+      });
+    })
+    .catch((error) => {
+      console.log(error);
     })
     .catch((error) => {
       console.log("auth postSignup: " + error);
