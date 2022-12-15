@@ -1,21 +1,19 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodeMailer = require("nodemailer");
-const sendGridTransport = require("nodemailer-sendgrid-transport");
 require("dotenv").config();
 
 const saltValue = 12;
 
 // A setup to tell nodemailer on how our mails should be sent
 // sendGridTransport() - will return a configuration that nodemailer to use sebdGrid
-const transporter = nodeMailer.createTransport(
-  sendGridTransport({
-    auth: {
-      api_key:
-        "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",
-    },
-  })
-);
+const transporter = nodeMailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash("error");
