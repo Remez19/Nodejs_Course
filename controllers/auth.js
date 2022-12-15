@@ -1,3 +1,6 @@
+// Helsp us create unique, secure random values
+const crypto = require("crypto");
+
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodeMailer = require("nodemailer");
@@ -151,5 +154,54 @@ exports.getReset = (req, res, next) => {
     // Pulling the value of the key error, after that it will be removed
     // from the session
     errorMessage: message.length > 0 ? message[0] : null,
+  });
+};
+
+exports.postReset = (req, res, next) => {
+  const emailToSendLinkReset = req.body.email;
+  let experation = null;
+  // Second arg - function to be called once done
+  crypto.randomBytes(32, (error, buffer) => {
+    if (error) {
+      console.log(error);
+      return res.redirect("/reset");
+    }
+    // Convert hax values to asci values
+    // the token should be saved in the database for the user that neeeds it
+    // - a user that want to reset his password
+    const token = buffer.toString("hex");
+
+    // finding the user (that want to reset password )in the database.
+    User.findOne({ email: emailToSendLinkReset })
+      .then((user) => {
+        if (!user) {
+          req.flash(
+            "error",
+            "No account with that email: " + emailToSendLinkReset
+          );
+          return res.redirect("/reset");
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = experation = Date.now() + 360000;
+        return user.save();
+      })
+      .then((result) => {
+        res.redirect("/");
+        // The user stored  in the database
+        transporter.sendMail({
+          to: emailToSendLinkReset,
+          from: process.env.EMAIL,
+          subject: "Reset Password",
+          html: `
+            <h1>Password Reset</h1> 
+            <p>You requested a password reset</p>
+            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+            <p>The link will be available until ${experation.toString()}.</p>
+          `,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   });
 };
