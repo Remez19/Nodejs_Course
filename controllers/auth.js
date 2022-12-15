@@ -6,6 +6,11 @@ const bcrypt = require("bcryptjs");
 const nodeMailer = require("nodemailer");
 require("dotenv").config();
 
+// validationResult - function that allows us to get all
+// the errors prior to this middleware
+// the function gets a request object as an argument.
+const { validationResult } = require("express-validator/check");
+
 const saltValue = 12;
 
 // A setup to tell nodemailer on how our mails should be sent
@@ -98,6 +103,17 @@ exports.postSignup = (req, res, next) => {
   // Here we want to save a new user to the database
   const { email, password, confirmPassword } = req.body;
   // Validate user input - if the input is valid.
+  const errors = validationResult(req);
+
+  // check if we have errors in the user input
+  if (!errors.isEmpty) {
+    // 442 comon code for validation fail
+    return res.status(442).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
