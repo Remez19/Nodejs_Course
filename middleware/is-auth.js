@@ -5,3 +5,7 @@ module.exports = (req, res, next) => {
   }
   next();
 };
+
+// exports.isValidProductData = (req, res, next) => {
+
+// };

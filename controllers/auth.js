@@ -41,8 +41,10 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
+  const { email, password } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors);
     return res.status(422).render("auth/login", {
       path: "/login",
       pageTitle: "Login",
@@ -55,7 +57,6 @@ exports.postLogin = (req, res, next) => {
     });
   }
 
-  const { email, password } = req.body;
   /**
    * We can setup any key value by reaching req.session
    */
@@ -146,7 +147,6 @@ exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
   // Validate user input - if the input is valid.
   const errors = validationResult(req);
-  assert.idDa;
 
   // check if we have errors in the user input
   if (!errors.isEmpty()) {
