@@ -32,21 +32,26 @@ exports.getLogin = (req, res, next) => {
     // Pulling the value of the key error, after that it will be removed
     // from the session
     errorMessage: message.length > 0 ? message[0] : null,
-    // oldInput: {
-    //   email: "",
-    //   password: "",
-    //   confirmPassword: "",
-    // },
+    oldInput: {
+      email: "",
+      password: "",
+    },
+    validationErrors: [],
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(442).render("auth/login", {
+    return res.status(422).render("auth/login", {
       path: "/login",
       pageTitle: "Login",
       errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+        password: password,
+      },
+      validationErrors: errors.array(),
     });
   }
 
@@ -61,8 +66,16 @@ exports.postLogin = (req, res, next) => {
         // flash error message into our session
         // takes a key value pair.
         // Here the key="error", value="Invalid email or password"
-        req.flash("error", "Invalid email or password");
-        return res.redirect("/login");
+        return res.status(422).render("auth/login", {
+          path: "/login",
+          pageTitle: "Login",
+          errorMessage: "Invalid email or password",
+          oldInput: {
+            email: email,
+            password: password,
+          },
+          validationErrors: [],
+        });
       }
       // checks if the password the user entered is the hashed version.
       // return boolean => true or false
@@ -79,8 +92,16 @@ exports.postLogin = (req, res, next) => {
               res.redirect("/");
             });
           }
-          req.flash("error", "Invalid email or password");
-          res.redirect("/login");
+          return res.status(422).render("auth/login", {
+            path: "/login",
+            pageTitle: "Login",
+            errorMessage: "Invalid email or password",
+            oldInput: {
+              email: email,
+              password: password,
+            },
+            validationErrors: [],
+          });
         })
         .catch((error) => {
           console.log("postLogin " + error);
