@@ -10,6 +10,7 @@ require("dotenv").config();
 // the errors prior to this middleware
 // the function gets a request object as an argument.
 const { validationResult } = require("express-validator/check");
+const { assert } = require("console");
 
 const saltValue = 12;
 
@@ -124,6 +125,7 @@ exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
   // Validate user input - if the input is valid.
   const errors = validationResult(req);
+  assert.idDa;
 
   // check if we have errors in the user input
   if (!errors.isEmpty()) {
