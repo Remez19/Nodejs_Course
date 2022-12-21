@@ -13,14 +13,19 @@ router.get("/signup", authController.getSignup);
 // Post request for login
 router.post(
   "/login",
-  check("email").isEmail().withMessage("Please enter a valid email"),
+  check("email")
+    .isEmail()
+    .withMessage("Please enter a valid email")
+    .normalizeEmail(),
   body("password")
     .isAlphanumeric()
     .custom((value, { req }) => {
       if (value.length < 5) {
         throw new Error("Password too short (at least 6 characters)");
       }
-    }),
+      return true;
+    })
+    .trim(),
   authController.postLogin
 );
 
@@ -51,14 +56,16 @@ router.post(
             return Promise.reject("Email exist");
           }
         });
-      }),
+      })
+      .normalizeEmail(),
     body(
       "password",
       //   Default error message for every check
       "Please enter password that contains only numbers and text at least 5 and lower than 20"
     )
+      .isAlphanumeric()
       .isLength({ min: 5, max: 20 })
-      .isAlphanumeric(),
+      .trim(),
     body("confirmPassword").custom((value, { req }) => {
       if (value !== req.body.password) {
         console.log("Remez");
