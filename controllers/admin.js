@@ -8,6 +8,7 @@ exports.getAddProduct = (req, res, next) => {
     errorMessage: null,
     hasError: false,
     editing: false,
+    validationErrors: [],
   });
 };
 
@@ -27,6 +28,7 @@ exports.postAddProduct = (req, res, next) => {
         imageUrl: imageUrl,
         description: description,
       },
+      validationErrors: errors.array(),
     });
   }
   const product = new Product({
@@ -69,6 +71,7 @@ exports.getEditProduct = (req, res, next) => {
         editing: editMode,
         hasError: false,
         product: product,
+        validationErrors: [],
       });
     })
     .catch((err) => console.log(err));
@@ -76,7 +79,24 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, price, description, imageUrl } = req.body;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      errorMessage: errors.array()[0].msg,
+      editing: true,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        imageUrl: imageUrl,
+        description: description,
+      },
+      _id: productId,
+      validationErrors: errors.array(),
+    });
+  }
   // return a full mongoose object which we can call save on later
   Product.findById(productId)
     .then((product) => {
