@@ -48,8 +48,13 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch((err) => {
-      res.redirect("/500");
+      // res.redirect("/500");
       // console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
     });
 };
 
@@ -75,7 +80,7 @@ exports.getEditProduct = (req, res, next) => {
         validationErrors: [],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => res.redirect("/500"));
 };
 
 exports.postEditProduct = (req, res, next) => {
