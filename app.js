@@ -44,7 +44,9 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
+// Works only with text - not file uploads
 app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(express.static(path.join(__dirname, "public")));
 /**
  * In the object we pass to "session()" we configure
