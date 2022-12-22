@@ -109,7 +109,13 @@ exports.postLogin = (req, res, next) => {
           res.redirect("/login");
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
+    });
 };
 
 exports.postLogout = (req, res, next) => {
@@ -197,8 +203,12 @@ exports.postSignup = (req, res, next) => {
     .catch((error) => {
       console.log(error);
     })
-    .catch((error) => {
-      console.log("auth postSignup: " + error);
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
     });
 };
 
@@ -258,8 +268,12 @@ exports.postReset = (req, res, next) => {
           `,
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // Will cause node to jump to a middleware that
+        // handle errors
+        return next(error);
       });
   });
 };
@@ -281,8 +295,12 @@ exports.getNewPassword = (req, res, next) => {
         passwordToken: token,
       });
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
     });
 };
 
@@ -306,7 +324,11 @@ exports.postNewPassword = (req, res, next) => {
     .then((result) => {
       res.redirect("/login");
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
     });
 };
