@@ -11,6 +11,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
 
 const port = process.env.PORT;
 
@@ -43,10 +44,16 @@ app.set("views", "views");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
+const { ResultWithContext } = require("express-validator/src/chain");
 
 // Works only with text - not file uploads
 app.use(bodyParser.urlencoded({ extended: false }));
-
+// Telling multer that we expect a single file to be submmited
+// and the name of the input is "image"
+// We can configure multer by passing an object.
+// with the dest keyword we tell multer where to store the data
+// Here the files will be stored in "images" folder (root dic of project)
+app.use(multer({ dest: "images" }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 /**
  * In the object we pass to "session()" we configure
