@@ -80,7 +80,13 @@ exports.getEditProduct = (req, res, next) => {
         validationErrors: [],
       });
     })
-    .catch((err) => res.redirect("/500"));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
+    });
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -118,7 +124,13 @@ exports.postEditProduct = (req, res, next) => {
         res.redirect("/admin/products");
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
+    });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -137,7 +149,11 @@ exports.getProducts = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
     });
 };
 
@@ -148,6 +164,10 @@ exports.postDeleteProduct = (req, res, next) => {
       res.redirect("/admin/products");
     })
     .catch((error) => {
-      console.log(error);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      // Will cause node to jump to a middleware that
+      // handle errors
+      return next(error);
     });
 };
