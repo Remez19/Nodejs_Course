@@ -54,6 +54,22 @@ const fileStorage = multer.diskStorage({
   },
 });
 
+const fileFilter = (req, file, cb) => {
+  // true - accepting the file.
+  // false - not accepting the file.
+  const fileCheck =
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg";
+  if (fileCheck) {
+    // accept file
+    cb(null, true);
+  } else {
+    // not accept file
+    cb(null, false);
+  }
+};
+
 app.set("view engine", "ejs");
 app.set("views", "views");
 
@@ -70,7 +86,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // with the dest keyword we tell multer where to store the data
 // Here the files will be stored in "images" folder (root dic of project)
 // storage gives us more configuration options then the dest key
-app.use(multer({ storage: fileStorage }).single("image"));
+app.use(multer({ storage: fileStorage, fileFilter: false }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 /**
  * In the object we pass to "session()" we configure
