@@ -126,5 +126,6 @@ mongoose
     });
   })
   .catch((error) => {
+    console.log(MONGODB_URI);
     console.log("Failed to Connect to Database");
   });
