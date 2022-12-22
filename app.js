@@ -86,7 +86,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // with the dest keyword we tell multer where to store the data
 // Here the files will be stored in "images" folder (root dic of project)
 // storage gives us more configuration options then the dest key
-app.use(multer({ storage: fileStorage, fileFilter: false }).single("image"));
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 app.use(express.static(path.join(__dirname, "public")));
 /**
  * In the object we pass to "session()" we configure
