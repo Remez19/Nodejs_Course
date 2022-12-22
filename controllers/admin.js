@@ -163,7 +163,7 @@ exports.postDeleteProduct = (req, res, next) => {
     .then(() => {
       res.redirect("/admin/products");
     })
-    .catch((error) => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       // Will cause node to jump to a middleware that
