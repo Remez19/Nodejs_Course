@@ -38,6 +38,22 @@ const store = new MongoDBStore({
 // More on the offical docs.
 const csrfProtection = csrf();
 
+// A confguration object
+// destination - function that controls on where to store the file.
+// filename - function that controls how the file should be saved.
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // first value should be error (if we have one) - here null
+    // second value is the destination to save the file.
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    // first value is error if we have on
+    // second value is the name of the file (how we want to save it)
+    cb(null, new Date().toISOString() + " - " + file.originalname);
+  },
+});
+
 app.set("view engine", "ejs");
 app.set("views", "views");
 
@@ -53,7 +69,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // We can configure multer by passing an object.
 // with the dest keyword we tell multer where to store the data
 // Here the files will be stored in "images" folder (root dic of project)
-app.use(multer({ dest: "images" }).single("image"));
+// storage gives us more configuration options then the dest key
+app.use(multer({ storage: fileStorage }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 /**
  * In the object we pass to "session()" we configure
