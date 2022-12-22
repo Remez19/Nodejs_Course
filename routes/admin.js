@@ -9,8 +9,6 @@ const { check } = require("express-validator");
 
 const router = express.Router();
 
-const checkProductData = (req, res, next) => {};
-
 // /admin/add-product => GET
 
 // We can add as many handlers we want and request will go
@@ -47,7 +45,6 @@ router.post(
   isAuth,
   [
     check("title").isString().isLength({ min: 3 }).trim(),
-    check("imageUrl").isURL(),
     check("price").isFloat(),
     check("description").isLength({ min: 5 }).trim(),
   ],
