@@ -162,6 +162,7 @@ app.use(errorController.get404);
 // if we have more than one error-handling middleware
 // it will go from top to bottom
 app.use((error, req, res, next) => {
+  console.log(error);
   res.redirect("/500");
 });
 

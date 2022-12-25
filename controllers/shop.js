@@ -1,6 +1,8 @@
 const Product = require("../models/product");
 const User = require("../models/user");
 const Order = require("../models/order");
+const fs = require("fs");
+const path = require("path");
 
 exports.getProducts = (req, res, next) => {
   // Product.find() - Will return all the records in the collection
@@ -92,7 +94,6 @@ exports.postCart = (req, res, next) => {
       return req.user.addToCart(product);
     })
     .then((result) => {
-      console.log(result);
       res.redirect("/cart");
     });
 };
@@ -114,7 +115,6 @@ exports.postCartDeleteProduct = (req, res) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  req.user;
   // In order to get the full data of each product in the cart we can use
   // "populate("cart.items.productId")"
   User.findById({ _id: req.user._id })
@@ -168,5 +168,36 @@ exports.getOrders = (req, res, next) => {
       // Will cause node to jump to a middleware that
       // handle errors
       return next(error);
+    });
+};
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  // Check if the user is autherized to download this invoice
+  Order.findById(orderId)
+    .then((order) => {
+      if (!order) {
+        return next(new Error("No Order Found"));
+      }
+      if (order.user.userId.toString() === req.user._id.toString()) {
+        return next(new Error("Unauthorized"));
+      }
+      const invoiceName = "invoice-" + orderId + ".pdf";
+      const invoicePath = path.join("data", "invoices", invoiceName);
+      fs.readFile(invoicePath, (err, data) => {
+        if (err) {
+          return next(err);
+        }
+        res.setHeader("Content-Type", "application/pdf");
+        // Allows us to define how this content should be served
+        res.setHeader(
+          "Content-Disposition",
+          'attachment; filename="' + invoiceName + '"'
+        );
+        res.send(data);
+      });
+    })
+    .catch((err) => {
+      return next(err);
     });
 };
