@@ -6,7 +6,7 @@ const path = require("path");
 
 const PDFDocument = require("pdfkit");
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 1;
 
 exports.getProducts = (req, res, next) => {
   // Product.find() - Will return all the records in the collection
@@ -49,7 +49,7 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
   // Getting the page we are at
-  const page = req.query.page;
+  const page = +req.query.page || 1;
   let totalItems = 0;
 
   // Counting the number of products
@@ -69,7 +69,7 @@ exports.getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        totalProducts: totalItems,
+        currentPage: page,
         csrfToken: req.csrfToken(),
         hasNext: ITEMS_PER_PAGE * page < totalItems,
         hasPreviousPage: page > 1,
