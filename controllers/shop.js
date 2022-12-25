@@ -4,6 +4,8 @@ const Order = require("../models/order");
 const fs = require("fs");
 const path = require("path");
 
+const PDFDocument = require("pdfkit");
+
 exports.getProducts = (req, res, next) => {
   // Product.find() - Will return all the records in the collection
   // if we know we will get lots of data we should work with cursor
@@ -184,32 +186,28 @@ exports.getInvoice = (req, res, next) => {
       }
       const invoiceName = "invoice-" + orderId + ".pdf";
       const invoicePath = path.join("data", "invoices", invoiceName);
-      // fs.readFile(invoicePath, (err, data) => {
-      //   if (err) {
-      //     return next(err);
-      //   }
-      //   res.setHeader("Content-Type", "application/pdf");
-      //   // Allows us to define how this content should be served
-      //   res.setHeader(
-      //     "Content-Disposition",
-      //     'attachment; filename="' + invoiceName + '"'
-      //   );
-      //   res.send(data);
-      // });
-      // Sreaming the file
-      const file = fs.createReadStream(invoicePath);
+
+      // Creates a new pdf document
+      // it is also a readable stream
+      const pdfDoc = new PDFDocument();
       res.setHeader("Content-Type", "application/pdf");
       // Allows us to define how this content should be served
       res.setHeader(
         "Content-Disposition",
         'attachment; filename="' + invoiceName + '"'
       );
-      // Calling the pipe method to forward the data that has read in with stream
-      // to the response object because is a writeable stream
-      file.pipe(res);
-    })
-    // Node will be able to read the file step by step in diffrent chuncks.
+      // Pipe it to a writeable stream
+      // To fs.createWriteStream() - we pass a path to define were to store the file
+      pdfDoc.pipe(fs.createWriteStream(invoicePath));
+      pdfDoc.pipe(res);
 
+      // Writing to the pdf file
+      // text() - Allow us to write a single line of text into the document
+      pdfDoc.text("Your Invoice!");
+
+      // Tell node when we are done to writing to this stream
+      pdfDoc.end();
+    })
     .catch((err) => {
       return next(err);
     });
