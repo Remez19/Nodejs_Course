@@ -179,26 +179,37 @@ exports.getInvoice = (req, res, next) => {
       if (!order) {
         return next(new Error("No Order Found"));
       }
-      console.log("Order: " + order.user.userId.toString());
-      console.log("User: " + req.user._id.toString());
       if (order.user.userId.toString() !== req.user._id.toString()) {
         return next(new Error("Unauthorized"));
       }
       const invoiceName = "invoice-" + orderId + ".pdf";
       const invoicePath = path.join("data", "invoices", invoiceName);
-      fs.readFile(invoicePath, (err, data) => {
-        if (err) {
-          return next(err);
-        }
-        res.setHeader("Content-Type", "application/pdf");
-        // Allows us to define how this content should be served
-        res.setHeader(
-          "Content-Disposition",
-          'attachment; filename="' + invoiceName + '"'
-        );
-        res.send(data);
-      });
+      // fs.readFile(invoicePath, (err, data) => {
+      //   if (err) {
+      //     return next(err);
+      //   }
+      //   res.setHeader("Content-Type", "application/pdf");
+      //   // Allows us to define how this content should be served
+      //   res.setHeader(
+      //     "Content-Disposition",
+      //     'attachment; filename="' + invoiceName + '"'
+      //   );
+      //   res.send(data);
+      // });
+      // Sreaming the file
+      const file = fs.createReadStream(invoicePathnvoice);
+      res.setHeader("Content-Type", "application/pdf");
+      // Allows us to define how this content should be served
+      res.setHeader(
+        "Content-Disposition",
+        'attachment; filename="' + invoiceName + '"'
+      );
+      // Calling the pipe method to forward the data that has read in with stream
+      // to the response object because is a writeable stream
+      file.pipe(res);
     })
+    // Node will be able to read the file step by step in diffrent chuncks.
+
     .catch((err) => {
       return next(err);
     });
