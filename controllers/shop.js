@@ -6,6 +6,8 @@ const path = require("path");
 
 const PDFDocument = require("pdfkit");
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getProducts = (req, res, next) => {
   // Product.find() - Will return all the records in the collection
   // if we know we will get lots of data we should work with cursor
@@ -46,7 +48,13 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  // Getting the page we are at
+  const page = req.query.page;
   Product.find()
+    // We can use skip() to skip the first x amount of results
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    // limit() - limit the amount of data we fetch to the number wew pass
+    .limit(ITEMS_PER_PAGE)
     .then((products) => {
       res.render("shop/index", {
         prods: products,
