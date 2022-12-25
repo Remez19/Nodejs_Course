@@ -6,17 +6,36 @@ const path = require("path");
 
 const PDFDocument = require("pdfkit");
 
-const ITEMS_PER_PAGE = 1;
+const ITEMS_PER_PAGE = 2;
 
 exports.getProducts = (req, res, next) => {
-  // Product.find() - Will return all the records in the collection
-  // if we know we will get lots of data we should work with cursor
+  const page = +req.query.page || 1;
+  let totalItems = 0;
+
+  // Counting the number of products
   Product.find()
+    .countDocuments()
+    .then((numberOfProducts) => {
+      totalItems = numberOfProducts;
+      return (
+        Product.find() // We can use skip() to skip the first x amount of results
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // limit() - limit the amount of data we fetch to the number wew pass
+          .limit(ITEMS_PER_PAGE)
+      );
+    })
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
-        pageTitle: "All Products",
+        pageTitle: "Products",
         path: "/products",
+        currentPage: page,
+        csrfToken: req.csrfToken(),
+        hasNext: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
