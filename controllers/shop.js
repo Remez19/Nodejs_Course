@@ -179,7 +179,9 @@ exports.getInvoice = (req, res, next) => {
       if (!order) {
         return next(new Error("No Order Found"));
       }
-      if (order.user.userId.toString() === req.user._id.toString()) {
+      console.log("Order: " + order.user.userId.toString());
+      console.log("User: " + req.user._id.toString());
+      if (order.user.userId.toString() !== req.user._id.toString()) {
         return next(new Error("Unauthorized"));
       }
       const invoiceName = "invoice-" + orderId + ".pdf";
