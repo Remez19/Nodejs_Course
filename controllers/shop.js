@@ -197,7 +197,7 @@ exports.getInvoice = (req, res, next) => {
       //   res.send(data);
       // });
       // Sreaming the file
-      const file = fs.createReadStream(invoicePathnvoice);
+      const file = fs.createReadStream(invoicePath);
       res.setHeader("Content-Type", "application/pdf");
       // Allows us to define how this content should be served
       res.setHeader(
