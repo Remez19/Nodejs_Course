@@ -201,10 +201,29 @@ exports.getInvoice = (req, res, next) => {
       pdfDoc.pipe(fs.createWriteStream(invoicePath));
       pdfDoc.pipe(res);
 
-      // Writing to the pdf file
-      // text() - Allow us to write a single line of text into the document
-      pdfDoc.text("Your Invoice!");
-
+      // Adding font size to the text
+      // We can pass in an object to define more attributes to the text
+      pdfDoc.fontSize(26).text("Invoice", {
+        underline: true,
+      });
+      pdfDoc.text("--------------------------------");
+      let totalPrice = 0;
+      order.products.forEach((prod) => {
+        pdfDoc
+          .fontSize(14)
+          .text(
+            `${prod.productData.title} - ${prod.quantity} x $${prod.productData.price}`
+          );
+        totalPrice += prod.quantity * prod.productData.price;
+      });
+      pdfDoc.fontSize(26).text("--------------------------------");
+      pdfDoc.font("Courier-Bold").fontSize(20).text("Total Price:", {
+        underline: true,
+      });
+      pdfDoc
+        .font("Courier-Bold")
+        .fontSize(18)
+        .text("$" + totalPrice);
       // Tell node when we are done to writing to this stream
       pdfDoc.end();
     })
