@@ -50,21 +50,32 @@ exports.getProduct = (req, res, next) => {
 exports.getIndex = (req, res, next) => {
   // Getting the page we are at
   const page = req.query.page;
+  let totalItems = 0;
+
+  // Counting the number of products
   Product.find()
-    // We can use skip() to skip the first x amount of results
-    .skip((page - 1) * ITEMS_PER_PAGE)
-    // limit() - limit the amount of data we fetch to the number wew pass
-    .limit(ITEMS_PER_PAGE)
+    .countDocuments()
+    .then((numberOfProducts) => {
+      totalItems = numberOfProducts;
+      return (
+        Product.find() // We can use skip() to skip the first x amount of results
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // limit() - limit the amount of data we fetch to the number wew pass
+          .limit(ITEMS_PER_PAGE)
+      );
+    })
     .then((products) => {
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-
-        // csrfToken() - the method is provided by csrf middleware we add with the package
-        // Will generate a csrf token
-        // Now we can use this token in our view.
+        totalProducts: totalItems,
         csrfToken: req.csrfToken(),
+        hasNext: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
